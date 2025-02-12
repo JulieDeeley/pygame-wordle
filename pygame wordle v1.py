@@ -101,8 +101,7 @@ def check_guess(answer, current_guess, keyboard_colours):
     # of letter indexes to colour values
   
     print(f"DEBUG: The word is {answer}")  # Debugging the word
-    
-   
+  
     feedback = [WHITE] *GRID_COLS
     remaining_letters = list(answer) # IMPORTANT! a list changed here will change in the main function
     # so use a new list instead! You can also copy the list for a local copy with answer=list(answer)
@@ -113,7 +112,6 @@ def check_guess(answer, current_guess, keyboard_colours):
         if current_guess[i] == answer[i]:
             feedback[i] = GREEN 
             remaining_letters[i] = None # replace the letter in  remaining_letters with None.
-
             keyboard_colours[current_guess[i].upper()] = GREEN #keyboard key colour changed to green
   
     # Second pass to handle incorrect positions and absent letters.
@@ -132,13 +130,11 @@ def check_guess(answer, current_guess, keyboard_colours):
         elif feedback[j] == WHITE: # if the feedback is still white
             feedback[j] = MID_GREY
 
-            if current_guess[j].upper() not in answer: #if the letter is  not  in the answer
+            if current_guess[j].upper() not in answer and keyboard_colours[current_guess[j].upper()] != GREEN: #if the letter is  not  in the answer
                 keyboard_colours[current_guess[j].upper()] = MID_GREY # turn the keyboard key into MID_GREY   
-
-            
+          
     #print(f'feedback: {feedback}') #debug
     return feedback, keyboard_colours
-
 
 def draw_grid(colour_array):
     # takes the 2-D colour array and displays each guessed letters status by colour
