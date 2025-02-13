@@ -11,9 +11,9 @@ clock = pygame.time.Clock()
 # Constants for screen size, colors, and grid
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 850
 BLACK, WHITE, = (0, 0, 0), (255, 255, 255) 
-#GREEN = (0, 128, 0)
+#DARKER_GREEN = (0, 128, 0)
 GREEN = (87, 197, 87)
-#MID_BLUE_GREY = (179, 204, 204)
+#OLD_MID_BLUE_GREY = (179, 204, 204)
 MID_BLUE_GREY = (133, 173, 173)
 DARKER_BLUE_GREY = (102, 153, 153)
 DARK_GREY = (50, 50, 50)
@@ -28,7 +28,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Constants for word length, allowed guesses 
 WORD_LENGTH = 5
 TOTAL_GUESSES_ALLOWED = 5
-
 
 # Keyboard layout coordinates with width (x, y, width)
 keyboard_offset_y = SCREEN_HEIGHT // 4  # starts drawing keyboard 1/4 the way down the screen on y axis
@@ -75,7 +74,6 @@ grid_offset_y = SCREEN_HEIGHT - 150 - keyboard_offset_y - (GRID_ROWS * RECT_HEIG
 # Define key height for the keyboard
 key_height = 50  # Set a fixed key height
 
-
 # Helper functions
 def pick_a_word():
     # picks a random word from a file to be the answer to the game
@@ -100,8 +98,7 @@ def check_guess(answer, current_guess, keyboard_colours):
     # 'keyboard colour' tracks letter colours to change the key colours on the keyboard by keeping a dictionary
     # of letter indexes to colour values
   
-    print(f"DEBUG: The word is {answer}")  # Debugging the word
-  
+    print(f"DEBUG: The word is {answer}")  # Debugging the word  
     feedback = [WHITE] *GRID_COLS
     remaining_letters = list(answer) # IMPORTANT! a list changed here will change in the main function
     # so use a new list instead! You can also copy the list for a local copy with answer=list(answer)
@@ -133,8 +130,7 @@ def check_guess(answer, current_guess, keyboard_colours):
             if current_guess[j].upper() not in answer\
                 and keyboard_colours[current_guess[j].upper()] != GREEN\
                 and keyboard_colours[current_guess[j].upper()] != DIRTY_YELLOW: #if the letter is  not  in the answer
-                keyboard_colours[current_guess[j].upper()] = MID_GREY # turn the keyboard key into MID_GREY   
-          
+                keyboard_colours[current_guess[j].upper()] = MID_GREY # turn the keyboard key into MID_GREY            
     #print(f'feedback: {feedback}') #debug
     return feedback, keyboard_colours
 
@@ -157,6 +153,7 @@ def draw_grid(colour_array):
                  RECT_WIDTH - 2 * PADDING, RECT_HEIGHT - 2 * PADDING), outline_width)  
 
 def draw_keyboard(keyboard_colours):
+    #draw the on screen keyboard
     font = pygame.font.Font(None, 30)
     for  key, pos in keyboard_layout.items():
         x, y, width = pos  # Unpack the x, y, and width values
@@ -167,7 +164,6 @@ def draw_keyboard(keyboard_colours):
         # Render the key text and center it
         text = font.render(key, True, BLACK) # string, antialias, colour
         screen.blit(text, (x + (width - text.get_width()) // 2, y + (key_height - text.get_height()) // 2))
-
 
 def display_guesses(guess_array):
     # display all guesses so far
@@ -195,7 +191,6 @@ def game_over_screen(result, answer):
     play_again_text = font.render("To play again, click here.", True, MID_BLUE_GREY)
     screen.blit(play_again_text, (SCREEN_WIDTH // 2 - play_again_text.get_width() // 2, SCREEN_HEIGHT // 2 + -340))
     pygame.display.flip()
-
 
 def await_player_response():
     # Wait for user to click Play Again or Quit
@@ -225,8 +220,18 @@ def delay_key_bounce(last_key_time, debounce_time):
     if current_time - last_key_time > debounce_time: # has delay time passed?
         last_key_time = current_time # if so update the time
 
-# Main game loop
+def check_if_won(current_guess, answer, game_over, current_row,result):
+    # check to see if player won or lost
+    if "".join(current_guess) == answer:
+        result = "win"
+        game_over = True
+    elif current_row + 1 == TOTAL_GUESSES_ALLOWED:
+        result = "lose"
+        game_over = True
+    return result, game_over
+
 def guess_the_word():
+    # Main game loop
     running = True
     game_over = False
     selected_key = None
@@ -239,10 +244,8 @@ def guess_the_word():
     last_key_time = 0 # used to delay input
     debounce_time = 0.2  # seconds, used to delay input
     answer = pick_a_word()  # Pick the word at the start of the game
-    #print(f"DEBUG: The word is {answer}")  # Debugging the word
-
-
-    
+    #print(f"DEBUG: The word is {answer}")  # Debugging the word   
+         
     while running:
         screen.fill(WHITE)  # Clear screen
         
@@ -256,33 +259,27 @@ def guess_the_word():
                 mouse_pos = event.pos  # mouse_pos records where
                 for key, pos in keyboard_layout.items():
                     x, y, width = pos  # Unpack the x, y, and width values
-
                     rect = pygame.Rect(x, y, width, key_height)  # Use the actual width from the layout
+
                     if rect.collidepoint(mouse_pos):  # if the rect and mouse pos match
                         selected_key = key
-                        print(f"Selected Key: {selected_key}")  # Debugging the key selection
+                        #print(f"Selected Key: {selected_key}")  # Debugging the key selection
                         if selected_key == 'DEL' and len(current_guess) > 0:
                             current_guess.pop()  # Remove last character
                         elif selected_key != 'DEL' and selected_key != 'ENT' and len(current_guess) < WORD_LENGTH :
                             current_guess.append(selected_key.lower())  # Add the selected key to current_guess
-                            print(current_guess)
+                            #print(current_guess) #debug current_guess
 
                         # If "ENTER" is pressed and guess is complete, check the guess
                         if selected_key == 'ENT' and len(current_guess) == WORD_LENGTH: # enter is pushed
 
                             # add current guess to guess_array
                             guess_array.append(current_guess)
-                            print(guess_array)
+                            #print(guess_array) #debug guess_array
                             colour_array[current_row], keyboard_colours=(check_guess(answer, current_guess,keyboard_colours)) # check current guess against answer, returns colours from feedback var to append to colour_array
                             draw_grid(colour_array) #update the grid colours from the user guess
                             # Check for win/lose
-                            if "".join(current_guess) == answer:
-                                result = "win"
-                                game_over = True
-                            elif current_row + 1 == TOTAL_GUESSES_ALLOWED:
-                                result = "lose"
-                                game_over = True
-
+                            result, game_over= check_if_won(current_guess, answer, game_over, current_row, result)
                             current_row += 1  # Increment row for the next guess
                             current_guess = []  # Reset current_guess after pressing Enter
         # Drawing
@@ -299,13 +296,10 @@ def guess_the_word():
         if game_over:
             game_over_screen(result, answer)
             await_player_response()
-
-        
-        pygame.display.flip()  # Update display
-        
+       
+        pygame.display.flip()  # Update display       
         # Limit FPS to 60
         clock.tick(60)
-
     pygame.quit()
 
 # Start the game
