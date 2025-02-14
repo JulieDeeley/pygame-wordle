@@ -273,7 +273,7 @@ def guess_the_word():
                             guess_array.append(current_guess)
                             print(guess_array)
                             colour_array[current_row], keyboard_colours=(check_guess(answer, current_guess,keyboard_colours)) # check current guess against answer, returns colours from feedback var to append to colour_array
-                            draw_grid(colour_array) #update the grid colours from the user guess
+        
                             # Check for win/lose
                             if "".join(current_guess) == answer:
                                 result = "win"
@@ -282,8 +282,9 @@ def guess_the_word():
                                 result = "lose"
                                 game_over = True
 
-                            current_row += 1  # Increment row for the next guess
-                            current_guess = []  # Reset current_guess after pressing Enter
+                            if not game_over: # don't increment automatically
+                                current_row += 1  # Increment row for the next guess
+                                current_guess = []  # Reset current_guess after pressing Enter
         # Drawing
         draw_grid(colour_array)
         draw_keyboard(keyboard_colours)

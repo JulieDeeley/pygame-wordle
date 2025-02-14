@@ -184,9 +184,9 @@ def game_over_screen(result, answer):
     text = font.render(message, True, GREEN if result == "win" else DARK_GREY)
     screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - 380))
 
-    # play win sound
-    pygame.mixer.music.load('8-bit-video-game-win-level-sound-version-1-145827.mp3')
-    pygame.mixer.music.play()
+    # # play win sound
+    # pygame.mixer.music.load('8-bit-video-game-win-level-sound-version-1-145827.mp3')
+    # pygame.mixer.music.play()
 
     # If the result is 'lose', display the correct answer message
     if result == "lose":
@@ -194,9 +194,9 @@ def game_over_screen(result, answer):
         text = font.render(message, True, MID_BLUE_GREY)
         screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT -150))
 
-        # play lose sound
-        pygame.mixer.music.load('failed-sound-effect-278635.mp3')
-        pygame.mixer.music.play()
+        # # play lose sound
+        # pygame.mixer.music.load('failed-sound-effect-278635.mp3')
+        # pygame.mixer.music.play()
 
 
     # Display Play Again or Quit option
@@ -251,7 +251,7 @@ def guess_the_word():
     guess_array = []  # list array to store all guesses
     colour_array =[[WHITE for _ in range(GRID_COLS)] for _ in range(GRID_ROWS)]  # list array to store feedback colors, default is white until changed by a guess
     current_row = 0  # Keep track of the row where the current guess is being entered
-    result = ''
+    result = None
     keyboard_colours  = {letter: LIGHT_GREY for letter in string.ascii_uppercase} # reset keyboard colours
     last_key_time = 0 # used to delay input
     debounce_time = 0.2  # seconds, used to delay input
@@ -289,19 +289,19 @@ def guess_the_word():
                             guess_array.append(current_guess)
                             #print(guess_array) #debug guess_array
                             colour_array[current_row], keyboard_colours=(check_guess(answer, current_guess,keyboard_colours)) # check current guess against answer, returns colours from feedback var to append to colour_array
-                            draw_grid(colour_array) #update the grid colours from the user guess
                             # Check for win/lose
                             result, game_over= check_if_won(current_guess, answer, game_over, current_row, result)
-                            current_row += 1  # Increment row for the next guess
-                            current_guess = []  # Reset current_guess after pressing Enter
+                            if not game_over: # don't increment automatically in case want to use current row in later modifications
+                                current_row += 1  # Increment row for the next guess
+                                current_guess = []  # Reset current_guess after pressing Enter
         # Drawing
         draw_grid(colour_array)
         draw_keyboard(keyboard_colours)
 
-        # display all guesses
+        # display all past guesses
         display_guesses(guess_array)
 
-        # Display current_guess ongoing
+        # Display current_guess happening now
         display_guess_in_progress(current_guess, current_row)
 
         # monitor game over status
