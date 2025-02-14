@@ -4,9 +4,14 @@ import random
 import sys
 import string # to create keyboard colour key/value pairs
 import time # used for keybounce pause so user can't input letters too fast
+# Change the working directory to the script's directory once
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+# sounds from https://pixabay.com/sound-effects/search/win%20sound/
 
 pygame.init()
 clock = pygame.time.Clock()
+# get the alarm sound ready to go
 
 # Constants for screen size, colors, and grid
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 850
@@ -180,12 +185,20 @@ def game_over_screen(result, answer):
     text = font.render(message, True, GREEN if result == "win" else DARK_GREY)
     screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - 380))
 
+    # play win sound
+    pygame.mixer.music.load('8-bit-video-game-win-level-sound-version-1-145827.mp3')
+    pygame.mixer.music.play()
 
     # If the result is 'lose', display the correct answer message
     if result == "lose":
         message = "The answer was "+ answer +'.'
         text = font.render(message, True, MID_BLUE_GREY)
-        screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT -150))  
+        screen.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT -150))
+
+        # play lose sound
+        pygame.mixer.music.load('failed-sound-effect-278635.mp3')
+        pygame.mixer.music.play()
+
 
     # Display Play Again or Quit option
     play_again_text = font.render("To play again, click here.", True, MID_BLUE_GREY)
