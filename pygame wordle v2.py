@@ -132,9 +132,8 @@ def check_guess(answer, current_guess, keyboard_colours):
         elif feedback[j] == WHITE: # if the feedback is still white
             feedback[j] = MID_GREY
 
-            if current_guess[j].upper() not in answer\
-                and keyboard_colours[current_guess[j].upper()] != GREEN\
-                and keyboard_colours[current_guess[j].upper()] != DIRTY_YELLOW: #if the letter is  not  in the answer
+            if current_guess[j].upper() not in answer and\
+                keyboard_colours[current_guess[j].upper()] == LIGHT_GREY:
                 keyboard_colours[current_guess[j].upper()] = MID_GREY # turn the keyboard key into MID_GREY            
     #print(f'feedback: {feedback}') #debug
     return feedback, keyboard_colours
@@ -145,7 +144,7 @@ def draw_grid(colour_array):
     for row in range(GRID_ROWS):
         outline_width = 3
         for col in range(GRID_COLS):
-            # Draw the white rectangle with a black outline
+            # Draw the white rectangle with a LIGHT_GREY outline
             pygame.draw.rect(
                 screen, colour_array[row][col],  # Colour for the fill
                 (offset_x + col * RECT_WIDTH + PADDING, grid_offset_y + row * RECT_HEIGHT + PADDING,

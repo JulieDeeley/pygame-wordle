@@ -116,7 +116,7 @@ def check_guess(answer, current_guess, keyboard_colours):
   
     # Second pass to handle incorrect positions and absent letters.
     # Correct guesses in incorrect positions will be added to feedback as DIRTY_YELLOW
-    # Incorrect letters in the guess will result in a LIGHT_GREY
+    # Incorrect letters in the guess will result in a MID_GREY
     
     for j in range(len(current_guess)):
         if current_guess[j] in  remaining_letters and feedback[j] == WHITE: #if there is a matching letter left in the word and the spot in feedback is 'WHITE', add string yellow
@@ -130,9 +130,8 @@ def check_guess(answer, current_guess, keyboard_colours):
         elif feedback[j] == WHITE: # if the feedback is still white
             feedback[j] = MID_GREY
 
-            if current_guess[j].upper() not in answer\
-                and keyboard_colours[current_guess[j].upper()] != GREEN\
-                and keyboard_colours[current_guess[j].upper()] != DIRTY_YELLOW: #if the letter is  not  in the answer
+            if current_guess[j].upper() not in answer and\
+                keyboard_colours[current_guess[j].upper()] == LIGHT_GREY: #if the letter is  not  in the answer
                 keyboard_colours[current_guess[j].upper()] = MID_GREY # turn the keyboard key into MID_GREY   
           
     #print(f'feedback: {feedback}') #debug
@@ -144,7 +143,7 @@ def draw_grid(colour_array):
     for row in range(GRID_ROWS):
         outline_width = 3
         for col in range(GRID_COLS):
-            # Draw the white rectangle with a black outline
+            # Draw the white rectangle with a LIGHT_GREY outline
             pygame.draw.rect(
                 screen, colour_array[row][col],  # Colour for the fill
                 (offset_x + col * RECT_WIDTH + PADDING, grid_offset_y + row * RECT_HEIGHT + PADDING,
@@ -299,7 +298,6 @@ def guess_the_word():
         if game_over:
             game_over_screen(result, answer)
             await_player_response()
-
         
         pygame.display.flip()  # Update display
         
